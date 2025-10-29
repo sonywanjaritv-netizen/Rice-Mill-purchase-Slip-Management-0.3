@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purchase Slip Reports</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <nav class="navbar navbar-dark bg-primary">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1">Purchase Slip Reports</span>
+            <a href="/" class="btn btn-light">New Purchase Slip</a>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-white">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4 class="mb-0">All Purchase Slips</h4>
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" class="form-control" id="searchInput" placeholder="Search by party or material...">
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Bill No</th>
+                                <th>Date</th>
+                                <th>Party Name</th>
+                                <th>Material</th>
+                                <th>Net Weight</th>
+                                <th>Payable Amount</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="slipsTableBody">
+                            <tr>
+                                <td colspan="7" class="text-center">Loading...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let allSlips = [];
+
+        async function loadSlips() {
+            try {
+                const response = await fetch('/api/slips');
+                const data = await response.json();
+
+                if (data.success) {
+                    allSlips = data.slips;
+                    renderSlips(allSlips);
+                } else {
+                    document.getElementById('slipsTableBody').innerHTML =
+                        '<tr><td colspan="7" class="text-center text-danger">Error loading slips</td></tr>';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('slipsTableBody').innerHTML =
+                    '<tr><td colspan="7" class="text-center text-danger">Error loading slips</td></tr>';
+            }
+        }
+
+        function renderSlips(slips) {
+            const tbody = document.getElementById('slipsTableBody');
+
+            if (slips.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" class="text-center">No purchase slips found</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = slips.map(slip => `
+                <tr>
+                    <td>${slip.bill_no}</td>
+                    <td>${slip.date}</td>
+                    <td>${slip.party_name || '-'}</td>
+                    <td>${slip.material_name || '-'}</td>
+                    <td>${parseFloat(slip.net_weight || 0).toFixed(2)} kg</td>
+                    <td>₹ ${parseFloat(slip.payable_amount || 0).toFixed(2)}</td>
+                    <td>
+                        <button class="btn btn-sm btn-primary" onclick="printSlip(${slip.id})">Print</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteSlip(${slip.id})">Delete</button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function printSlip(slipId) {
+            window.open(`/print/${slipId}`, '_blank');
+        }
+
+        async function deleteSlip(slipId) {
+            if (!confirm('Are you sure you want to delete this slip?')) {
+                return;
+            }
+
+            try {
+                const response = await fetch(`/api/slip/${slipId}`, {
+                    method: 'DELETE'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('Slip deleted successfully');
+                    loadSlips();
+                } else {
+                    alert('Error deleting slip: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error deleting slip');
+            }
+        }
+
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const filteredSlips = allSlips.filter(slip => {
+                const partyName = (slip.party_name || '').toLowerCase();
+                const material = (slip.material_name || '').toLowerCase();
+                return partyName.includes(searchTerm) || material.includes(searchTerm);
+            });
+            renderSlips(filteredSlips);
+        });
+
+        loadSlips();
+    </script>
+</body>
+</html>
