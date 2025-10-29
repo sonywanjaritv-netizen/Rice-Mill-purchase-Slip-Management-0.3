@@ -8,8 +8,10 @@ def init_db():
     conn = sqlite3.connect(DATABASE_PATH)
     cursor = conn.cursor()
 
+    cursor.execute('DROP TABLE IF EXISTS purchase_slips')
+
     cursor.execute('''
-        CREATE TABLE IF NOT EXISTS purchase_slips (
+        CREATE TABLE purchase_slips (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             company_name TEXT,
             company_address TEXT,
@@ -38,6 +40,11 @@ def init_db():
             dalali REAL DEFAULT 0,
             hammali_rate REAL DEFAULT 10,
             hammali REAL DEFAULT 0,
+            freight REAL DEFAULT 0,
+            rate_diff REAL DEFAULT 0,
+            quality_diff REAL DEFAULT 0,
+            moisture_ded REAL DEFAULT 0,
+            tds REAL DEFAULT 0,
             total_deduction REAL DEFAULT 0,
             payable_amount REAL DEFAULT 0,
             payment_method TEXT,

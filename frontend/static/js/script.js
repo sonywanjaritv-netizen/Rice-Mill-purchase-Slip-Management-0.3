@@ -18,6 +18,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const dalali = document.getElementById('dalali');
     const hammaliRate = document.getElementById('hammali_rate');
     const hammali = document.getElementById('hammali');
+    const freight = document.getElementById('freight');
+    const rateDiff = document.getElementById('rate_diff');
+    const qualityDiff = document.getElementById('quality_diff');
+    const moistureDed = document.getElementById('moisture_ded');
+    const tds = document.getElementById('tds');
     const totalDeduction = document.getElementById('total_deduction');
     const payableAmount = document.getElementById('payable_amount');
     const paymentAmount = document.getElementById('payment_amount');
@@ -46,6 +51,11 @@ document.addEventListener('DOMContentLoaded', function() {
         const shortagePercentVal = parseFloat(shortagePercent.value) || 1;
         const dalaliRateVal = parseFloat(dalaliRate.value) || 10;
         const hammaliRateVal = parseFloat(hammaliRate.value) || 10;
+        const freightVal = parseFloat(freight.value) || 0;
+        const rateDiffVal = parseFloat(rateDiff.value) || 0;
+        const qualityDiffVal = parseFloat(qualityDiff.value) || 0;
+        const moistureDedVal = parseFloat(moistureDed.value) || 0;
+        const tdsVal = parseFloat(tds.value) || 0;
 
         const netWeightVal = Math.round(bagsVal * avgBagWeightVal * 100) / 100;
         const amountVal = Math.round(netWeightVal * rateVal * 100) / 100;
@@ -53,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const shortageVal = Math.round(amountVal * (shortagePercentVal / 100) * 100) / 100;
         const dalaliVal = Math.round(netWeightVal * dalaliRateVal * 100) / 100;
         const hammaliVal = Math.round(netWeightVal * hammaliRateVal * 100) / 100;
-        const totalDeductionVal = Math.round((bankCommissionVal + batavVal + shortageVal + dalaliVal + hammaliVal) * 100) / 100;
+        const totalDeductionVal = Math.round((bankCommissionVal + batavVal + shortageVal + dalaliVal + hammaliVal + freightVal + rateDiffVal + qualityDiffVal + moistureDedVal + tdsVal) * 100) / 100;
         const payableAmountVal = Math.round((amountVal - totalDeductionVal) * 100) / 100;
 
         netWeight.value = netWeightVal.toFixed(2);
@@ -87,6 +97,11 @@ document.addEventListener('DOMContentLoaded', function() {
         data['shortage'] = shortage.value;
         data['dalali'] = dalali.value;
         data['hammali'] = hammali.value;
+        data['freight'] = freight.value;
+        data['rate_diff'] = rateDiff.value;
+        data['quality_diff'] = qualityDiff.value;
+        data['moisture_ded'] = moistureDed.value;
+        data['tds'] = tds.value;
         data['total_deduction'] = totalDeduction.value;
         data['payable_amount'] = payableAmount.textContent;
 

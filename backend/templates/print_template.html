@@ -287,6 +287,26 @@
                 <span>Hammali (Rate: {{ "%.2f"|format(slip.hammali_rate or 0) }}):</span>
                 <span>₹ {{ "%.2f"|format(slip.hammali or 0) }}</span>
             </div>
+            <div class="calc-row">
+                <span>Freight:</span>
+                <span>₹ {{ "%.2f"|format(slip.freight or 0) }}</span>
+            </div>
+            <div class="calc-row">
+                <span>Rate Diff.:</span>
+                <span>₹ {{ "%.2f"|format(slip.rate_diff or 0) }}</span>
+            </div>
+            <div class="calc-row">
+                <span>Quality Diff.:</span>
+                <span>₹ {{ "%.2f"|format(slip.quality_diff or 0) }}</span>
+            </div>
+            <div class="calc-row">
+                <span>Moisture Ded.:</span>
+                <span>₹ {{ "%.2f"|format(slip.moisture_ded or 0) }}</span>
+            </div>
+            <div class="calc-row">
+                <span>TDS:</span>
+                <span>₹ {{ "%.2f"|format(slip.tds or 0) }}</span>
+            </div>
             <div class="calc-row subtotal">
                 <span><strong>Total Deduction:</strong></span>
                 <span><strong>₹ {{ "%.2f"|format(slip.total_deduction or 0) }}</strong></span>

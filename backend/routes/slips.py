@@ -19,6 +19,11 @@ def calculate_fields(data):
     shortage_percent = float(data.get('shortage_percent', 1))
     dalali_rate = float(data.get('dalali_rate', 10))
     hammali_rate = float(data.get('hammali_rate', 10))
+    freight = float(data.get('freight', 0))
+    rate_diff = float(data.get('rate_diff', 0))
+    quality_diff = float(data.get('quality_diff', 0))
+    moisture_ded = float(data.get('moisture_ded', 0))
+    tds = float(data.get('tds', 0))
 
     net_weight = round(bags * avg_bag_weight, 2)
     amount = round(net_weight * rate, 2)
@@ -26,7 +31,7 @@ def calculate_fields(data):
     shortage = round(amount * (shortage_percent / 100), 2)
     dalali = round(net_weight * dalali_rate, 2)
     hammali = round(net_weight * hammali_rate, 2)
-    total_deduction = round(bank_commission + batav + shortage + dalali + hammali, 2)
+    total_deduction = round(bank_commission + batav + shortage + dalali + hammali + freight + rate_diff + quality_diff + moisture_ded + tds, 2)
     payable_amount = round(amount - total_deduction, 2)
 
     data.update({
@@ -36,6 +41,11 @@ def calculate_fields(data):
         'shortage': shortage,
         'dalali': dalali,
         'hammali': hammali,
+        'freight': freight,
+        'rate_diff': rate_diff,
+        'quality_diff': quality_diff,
+        'moisture_ded': moisture_ded,
+        'tds': tds,
         'total_deduction': total_deduction,
         'payable_amount': payable_amount
     })
@@ -60,9 +70,10 @@ def add_slip():
                 terms_of_delivery, sup_inv_no, gst_no, bags, avg_bag_weight,
                 net_weight, rate, amount, bank_commission, batav_percent, batav,
                 shortage_percent, shortage, dalali_rate, dalali, hammali_rate,
-                hammali, total_deduction, payable_amount, payment_method,
+                hammali, freight, rate_diff, quality_diff, moisture_ded, tds,
+                total_deduction, payable_amount, payment_method,
                 payment_date, payment_amount, prepared_by, authorised_sign
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (
             data.get('company_name', ''),
             data.get('company_address', ''),
@@ -91,6 +102,11 @@ def add_slip():
             data.get('dalali', 0),
             data.get('hammali_rate', 10),
             data.get('hammali', 0),
+            data.get('freight', 0),
+            data.get('rate_diff', 0),
+            data.get('quality_diff', 0),
+            data.get('moisture_ded', 0),
+            data.get('tds', 0),
             data.get('total_deduction', 0),
             data.get('payable_amount', 0),
             data.get('payment_method', ''),
