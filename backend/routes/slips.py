@@ -73,7 +73,7 @@ def add_slip():
                 hammali, freight, rate_diff, quality_diff, moisture_ded, tds,
                 total_deduction, payable_amount, payment_method,
                 payment_date, payment_amount, prepared_by, authorised_sign
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         ''', (
             data.get('company_name', ''),
             data.get('company_address', ''),
@@ -138,7 +138,7 @@ def get_slips():
     """Get all purchase slips"""
     try:
         conn = get_db_connection()
-        cursor = conn.cursor()
+        cursor = conn.cursor(dictionary=True)
 
         cursor.execute('''
             SELECT id, date, bill_no, party_name, material_name,
@@ -147,7 +147,8 @@ def get_slips():
             ORDER BY id DESC
         ''')
 
-        slips = [dict(row) for row in cursor.fetchall()]
+        slips = cursor.fetchall()
+        cursor.close()
         conn.close()
 
         return jsonify({
@@ -166,10 +167,11 @@ def get_slip(slip_id):
     """Get a single purchase slip by ID"""
     try:
         conn = get_db_connection()
-        cursor = conn.cursor()
+        cursor = conn.cursor(dictionary=True)
 
-        cursor.execute('SELECT * FROM purchase_slips WHERE id = ?', (slip_id,))
+        cursor.execute('SELECT * FROM purchase_slips WHERE id = %s', (slip_id,))
         slip = cursor.fetchone()
+        cursor.close()
         conn.close()
 
         if slip is None:
@@ -180,7 +182,7 @@ def get_slip(slip_id):
 
         return jsonify({
             'success': True,
-            'slip': dict(slip)
+            'slip': slip
         }), 200
 
     except Exception as e:
@@ -196,8 +198,9 @@ def delete_slip(slip_id):
         conn = get_db_connection()
         cursor = conn.cursor()
 
-        cursor.execute('DELETE FROM purchase_slips WHERE id = ?', (slip_id,))
+        cursor.execute('DELETE FROM purchase_slips WHERE id = %s', (slip_id,))
         conn.commit()
+        cursor.close()
         conn.close()
 
         return jsonify({
@@ -216,16 +219,17 @@ def print_slip(slip_id):
     """Render print template for a slip"""
     try:
         conn = get_db_connection()
-        cursor = conn.cursor()
+        cursor = conn.cursor(dictionary=True)
 
-        cursor.execute('SELECT * FROM purchase_slips WHERE id = ?', (slip_id,))
+        cursor.execute('SELECT * FROM purchase_slips WHERE id = %s', (slip_id,))
         slip = cursor.fetchone()
+        cursor.close()
         conn.close()
 
         if slip is None:
             return "Slip not found", 404
 
-        return render_template('print_template.html', slip=dict(slip))
+        return render_template('print_template.html', slip=slip)
 
     except Exception as e:
         return str(e), 400
