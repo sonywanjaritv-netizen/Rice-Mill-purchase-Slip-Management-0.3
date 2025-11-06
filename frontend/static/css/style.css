@@ -122,6 +122,30 @@ body {
     border-radius: 4px;
 }
 
+textarea.form-control {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.input-group-text {
+    background-color: #e9ecef;
+    border: 1px solid #ced4da;
+    padding: 0.6rem;
+}
+
+.form-check-input {
+    width: 1.25em;
+    height: 1.25em;
+    cursor: pointer;
+}
+
+.form-text {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-top: 0.25rem;
+    display: block;
+}
+
 @media (max-width: 768px) {
     .payable-box {
         flex-direction: column;

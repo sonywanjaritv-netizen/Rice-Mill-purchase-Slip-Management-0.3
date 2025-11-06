@@ -105,14 +105,32 @@
                         </div>
                         <div class="col-md-4">
                             <label class="form-label">Net Weight (kg)</label>
-                            <input type="number" step="0.01" class="form-control computed-field" id="net_weight" readonly>
+                            <div class="input-group">
+                                <input type="number" step="0.01" class="form-control computed-field" id="net_weight" readonly>
+                                <div class="input-group-text">
+                                    <input type="checkbox" class="form-check-input mt-0" id="auto_net_weight" title="Auto-calculate Net Weight">
+                                </div>
+                            </div>
+                            <small class="form-text text-muted">Check to auto-calculate (bags × avg weight)</small>
                         </div>
                     </div>
                     <div class="row mb-4">
                         <div class="col-md-6">
-                            <label class="form-label">Rate</label>
+                            <label class="form-label">Rate (100 kg)</label>
                             <input type="number" step="0.01" class="form-control calc-input" name="rate" id="rate" value="0">
                         </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Rate for 150 kg</label>
+                            <div class="input-group">
+                                <input type="number" step="0.01" class="form-control" id="rate_150kg" readonly>
+                                <div class="input-group-text">
+                                    <input type="checkbox" class="form-check-input mt-0" id="use_rate_150kg" title="Use 150kg rate">
+                                </div>
+                            </div>
+                            <small class="form-text text-muted">Check to use 150kg rate: (100kg rate ÷ 100) × 150</small>
+                        </div>
+                    </div>
+                    <div class="row mb-4">
                         <div class="col-md-6">
                             <label class="form-label">Amount</label>
                             <input type="number" step="0.01" class="form-control computed-field" id="amount" readonly>
@@ -136,8 +154,14 @@
                             <input type="number" step="0.01" class="form-control computed-field" id="batav" readonly>
                         </div>
                         <div class="col-md-6">
-                            <label class="form-label">Shortage %</label>
-                            <input type="number" step="0.01" class="form-control calc-input" name="shortage_percent" id="shortage_percent" value="1">
+                            <label class="form-label">Shortage % [Bora Vajan]</label>
+                            <div class="input-group">
+                                <input type="number" step="0.01" class="form-control calc-input" name="shortage_percent" id="shortage_percent" value="1">
+                                <div class="input-group-text">
+                                    <input type="checkbox" class="form-check-input mt-0" id="auto_shortage" checked title="Auto-calculate shortage">
+                                </div>
+                            </div>
+                            <small class="form-text text-muted">Check for % calculation, uncheck for manual amount</small>
                         </div>
                     </div>
                     <div class="row mb-3">
@@ -204,6 +228,14 @@
                                 <span class="payable-label">Payable Amount:</span>
                                 <span class="payable-value">₹ <span id="payable_amount">0.00</span></span>
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="section-header">Comments</div>
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <label class="form-label">Paddy Unloading Godown</label>
+                            <textarea class="form-control" name="paddy_unloading_godown" id="paddy_unloading_godown" rows="3" placeholder="Enter details about paddy unloading and godown"></textarea>
                         </div>
                     </div>
 

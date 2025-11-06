@@ -335,6 +335,15 @@
             </div>
         </div>
 
+        {% if slip.paddy_unloading_godown %}
+        <div class="content-section">
+            <div class="section-title">Paddy Unloading Godown</div>
+            <div style="font-size: 9pt; line-height: 1.4; word-wrap: break-word;">
+                {{ slip.paddy_unloading_godown }}
+            </div>
+        </div>
+        {% endif %}
+
         <div class="footer">
             <div class="signature-box">
                 <div class="signature-line">

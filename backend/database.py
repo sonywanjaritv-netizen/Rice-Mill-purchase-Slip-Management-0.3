@@ -103,6 +103,7 @@ def init_db():
                 payment_amount DOUBLE DEFAULT 0,
                 prepared_by VARCHAR(255),
                 authorised_sign VARCHAR(255),
+                paddy_unloading_godown TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         ''')

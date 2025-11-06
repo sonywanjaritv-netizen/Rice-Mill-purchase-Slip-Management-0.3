@@ -7,13 +7,17 @@ document.addEventListener('DOMContentLoaded', function() {
     const bags = document.getElementById('bags');
     const avgBagWeight = document.getElementById('avg_bag_weight');
     const netWeight = document.getElementById('net_weight');
+    const autoNetWeight = document.getElementById('auto_net_weight');
     const rate = document.getElementById('rate');
+    const rate150kg = document.getElementById('rate_150kg');
+    const useRate150kg = document.getElementById('use_rate_150kg');
     const amount = document.getElementById('amount');
     const bankCommission = document.getElementById('bank_commission');
     const batavPercent = document.getElementById('batav_percent');
     const batav = document.getElementById('batav');
     const shortagePercent = document.getElementById('shortage_percent');
     const shortage = document.getElementById('shortage');
+    const autoShortage = document.getElementById('auto_shortage');
     const dalaliRate = document.getElementById('dalali_rate');
     const dalali = document.getElementById('dalali');
     const hammaliRate = document.getElementById('hammali_rate');
@@ -29,6 +33,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     dateInput.valueAsDate = new Date();
     fetchNextBillNo();
+    autoNetWeight.checked = true;
+    autoShortage.checked = true;
 
     function fetchNextBillNo() {
         fetch('/api/next-bill-no')
@@ -42,10 +48,16 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     }
 
+    function calculateRate150kg() {
+        const rate100Val = parseFloat(rate.value) || 0;
+        const rate150Val = (rate100Val / 100) * 150;
+        rate150kg.value = rate150Val.toFixed(2);
+        return rate150Val;
+    }
+
     function calculateFields() {
         const bagsVal = parseFloat(bags.value) || 0;
         const avgBagWeightVal = parseFloat(avgBagWeight.value) || 0;
-        const rateVal = parseFloat(rate.value) || 0;
         const bankCommissionVal = parseFloat(bankCommission.value) || 0;
         const batavPercentVal = parseFloat(batavPercent.value) || 1;
         const shortagePercentVal = parseFloat(shortagePercent.value) || 1;
@@ -57,25 +69,78 @@ document.addEventListener('DOMContentLoaded', function() {
         const moistureDedVal = parseFloat(moistureDed.value) || 0;
         const tdsVal = parseFloat(tds.value) || 0;
 
-        const netWeightVal = Math.round(bagsVal * avgBagWeightVal * 100) / 100;
+        let rateVal = parseFloat(rate.value) || 0;
+        if (useRate150kg.checked) {
+            rateVal = (rateVal / 100) * 150;
+        }
+
+        let netWeightVal;
+        if (autoNetWeight.checked) {
+            netWeightVal = Math.round(bagsVal * avgBagWeightVal * 100) / 100;
+            netWeight.value = netWeightVal.toFixed(2);
+        } else {
+            netWeightVal = parseFloat(netWeight.value) || 0;
+            netWeight.removeAttribute('readonly');
+        }
+
+        if (autoNetWeight.checked) {
+            netWeight.setAttribute('readonly', 'true');
+        }
+
         const amountVal = Math.round(netWeightVal * rateVal * 100) / 100;
         const batavVal = Math.round(amountVal * (batavPercentVal / 100) * 100) / 100;
-        const shortageVal = Math.round(amountVal * (shortagePercentVal / 100) * 100) / 100;
+
+        let shortageVal;
+        if (autoShortage.checked) {
+            shortageVal = Math.round(amountVal * (shortagePercentVal / 100) * 100) / 100;
+            shortage.setAttribute('readonly', 'true');
+        } else {
+            shortageVal = parseFloat(shortage.value) || 0;
+            shortage.removeAttribute('readonly');
+        }
+
         const dalaliVal = Math.round(netWeightVal * dalaliRateVal * 100) / 100;
         const hammaliVal = Math.round(netWeightVal * hammaliRateVal * 100) / 100;
         const totalDeductionVal = Math.round((bankCommissionVal + batavVal + shortageVal + dalaliVal + hammaliVal + freightVal + rateDiffVal + qualityDiffVal + moistureDedVal + tdsVal) * 100) / 100;
         const payableAmountVal = Math.round((amountVal - totalDeductionVal) * 100) / 100;
 
-        netWeight.value = netWeightVal.toFixed(2);
         amount.value = amountVal.toFixed(2);
         batav.value = batavVal.toFixed(2);
-        shortage.value = shortageVal.toFixed(2);
+        if (autoShortage.checked) {
+            shortage.value = shortageVal.toFixed(2);
+        }
         dalali.value = dalaliVal.toFixed(2);
         hammali.value = hammaliVal.toFixed(2);
         totalDeduction.value = totalDeductionVal.toFixed(2);
         payableAmount.textContent = payableAmountVal.toFixed(2);
         paymentAmount.value = payableAmountVal.toFixed(2);
     }
+
+    rate.addEventListener('input', function() {
+        calculateRate150kg();
+        calculateFields();
+    });
+
+    useRate150kg.addEventListener('change', calculateFields);
+    autoNetWeight.addEventListener('change', function() {
+        if (this.checked) {
+            netWeight.setAttribute('readonly', 'true');
+        }
+        calculateFields();
+    });
+
+    autoShortage.addEventListener('change', function() {
+        if (this.checked) {
+            shortage.setAttribute('readonly', 'true');
+        }
+        calculateFields();
+    });
+
+    shortage.addEventListener('input', function() {
+        if (!autoShortage.checked) {
+            calculateFields();
+        }
+    });
 
     document.querySelectorAll('.calc-input').forEach(input => {
         input.addEventListener('input', calculateFields);
@@ -122,6 +187,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 form.reset();
                 dateInput.valueAsDate = new Date();
                 fetchNextBillNo();
+                autoNetWeight.checked = true;
+                autoShortage.checked = true;
                 calculateFields();
             } else {
                 alert('Error saving slip: ' + result.message);
@@ -137,9 +204,12 @@ document.addEventListener('DOMContentLoaded', function() {
             form.reset();
             dateInput.valueAsDate = new Date();
             fetchNextBillNo();
+            autoNetWeight.checked = true;
+            autoShortage.checked = true;
             calculateFields();
         }
     });
 
+    calculateRate150kg();
     calculateFields();
 });

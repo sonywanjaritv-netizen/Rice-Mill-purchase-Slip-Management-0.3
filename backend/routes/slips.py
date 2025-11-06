@@ -72,8 +72,9 @@ def add_slip():
                 shortage_percent, shortage, dalali_rate, dalali, hammali_rate,
                 hammali, freight, rate_diff, quality_diff, moisture_ded, tds,
                 total_deduction, payable_amount, payment_method,
-                payment_date, payment_amount, prepared_by, authorised_sign
-            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                payment_date, payment_amount, prepared_by, authorised_sign,
+                paddy_unloading_godown
+            ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         ''', (
             data.get('company_name', ''),
             data.get('company_address', ''),
@@ -113,7 +114,8 @@ def add_slip():
             data.get('payment_date', ''),
             data.get('payment_amount', 0),
             data.get('prepared_by', ''),
-            data.get('authorised_sign', '')
+            data.get('authorised_sign', ''),
+            data.get('paddy_unloading_godown', '')
         ))
 
         slip_id = cursor.lastrowid
